@@ -21,9 +21,6 @@ var SessionDescription =
         window.mozRTCSessionDescription ||
         window.webkitRTCSessionDescription;        
 
-// Create peer connection 
-var pc = new RTCPeerConnection();
-
 
 // Defining IceServers 
 var isChrome = !!navigator.webkitGetUserMedia;
@@ -36,6 +33,12 @@ var STUN = {
 var iceServers = {
    iceServers: [STUN]
 };
+
+// Create peer connection 
+var pc = new RTCPeerConnection(iceServers);
+
+// Such an event is sent by the browser to inform that negotiation will be required at some point in the future. 
+pc.onnegotiationneeded = function(eventß) { alert("negotiationneeded event detected!"); }; 
 
 
 // Initializing the call
@@ -53,14 +56,15 @@ pc.createOffer(function(offer) {
 	pc.setLocalDescription(sdp, function() {
 // Send the offer to a server to be forwarded to the friend you're calling.
 // js.FLow
-pc.onicecandidate()
 
     }, error);
      }, error);
 }
 
 // NEED: icecandidate automatically created with peerconnection, we have to send it to the other side
-peer.onicecandidate = function(event) {
+
+// Event handler called when the icecandidate event is received. Such an event is sent when a RTCICECandidate object is added to the script
+pc.onicecandidate = function(event) {
             var candidate = event.candidate;
             if(candidate) {
              
@@ -72,9 +76,9 @@ peer.onicecandidate = function(event) {
 
 // Answering a call
 var offer= getOfferFromFriend();
-navigator.getUserMedia({video: true, audio: true}, function(stream) {
-  pc.onaddstream({stream: stream});
-  pc.addStream(stream);
+//navigator.getUserMedia({video: true, audio: true}, function(stream) {
+ // pc.onaddstream({stream: stream});
+//  pc.addStream(stream);
 
 // Set up remote SDP
 var sdpRemote = new SessionDescription(offer);
