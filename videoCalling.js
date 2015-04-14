@@ -3,19 +3,40 @@
 var Websocket = require('ws');
 var ws = new WebSocket('ws://127.0.0.1:'+ port +'/websocket')
 
+// Run jsFlow
+jsFlow.run("DEV_PUBLIC_KEY");
 
+var peer = 'Bob';
+
+// Add handlers for jsFlow
+jsFlow.addHandler("SDPoffer",function (payload, from){
+  // Send message to peer containing SDP offer
+  jsFlow.messageChannel(peer, payload, 'SDPoffer');
+});
+
+jsFlow.addHandler("icecandidate",function (payload, from){
+  // Send message to peer containing ice candidate
+  jsFlow.messageChannel(peer, payload, 'icecandidate');
+});
+
+// ==========================================
 // RTC Peer Connection Session (one per call)
+// ==========================================
  var PeerConnection =
         window.RTCPeerConnection    ||
         window.mozRTCPeerConnection ||
         window.webkitRTCPeerConnection   
 
+// =================================
 // ICE (many route options per call)
+// =================================
  var IceCandidate =
         window.mozRTCIceCandidate ||
         window.RTCIceCandidate;
 
+// =====================================================
 // Media Session Description (offer and answer per call)
+// =====================================================
 var SessionDescription =
         window.RTCSessionDescription    ||
         window.mozRTCSessionDescription ||
@@ -38,7 +59,7 @@ var iceServers = {
 var pc = new RTCPeerConnection(iceServers);
 
 // Such an event is sent by the browser to inform that negotiation will be required at some point in the future. 
-pc.onnegotiationneeded = function(eventß) { alert("negotiationneeded event detected!"); }; 
+pc.onnegotiationneeded = function(event) { alert("negotiationneeded event detected!"); }; 
 
 
 // Initializing the call
@@ -57,9 +78,8 @@ pc.createOffer(function(offer) {
 // Send the offer to a server to be forwarded to the friend you're calling.
 // js.FLow
 
-    }, error);
-     }, error);
-}
+  }, error);
+}, error);
 
 // NEED: icecandidate automatically created with peerconnection, we have to send it to the other side
 
