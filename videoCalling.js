@@ -12,7 +12,8 @@ jsFlow.addHandler("SDPoffer",function (offer, from){
 
   navigator.getUserMedia({video: true, audio: true}, function(stream) {
     console.log('Got user media!');
-
+    $('video#localVideo').attr('src', URL.createObjectURL(stream));
+    
     // Create a stream
     pc.onaddstream = function(evt) {
       console.log('Stream was added!', evt.stream);
@@ -121,6 +122,7 @@ var makeCall = function(toUser) {
 
   navigator.getUserMedia({video: true, audio: true}, function(stream) {
     console.log('Got user media!');
+    $('video#localVideo').attr('src', URL.createObjectURL(stream));
 
     // Create a stream
     //pc.onaddstream({stream: stream});
